@@ -38,7 +38,15 @@ Route::get('/password/change', function () {
     return view('password.change');
 })->name('password.change');
 
+// パスワード更新処理
+Route::post('/password/update', 
+[PasswordController::class, 'update'])->name('password.update');
+
 // 問い合わせページ
 Route::get('/inquiry', function () {
     return view('inquiry'); // resources/views/inquiry.blade.php
 })->name('inquiry');
+
+// お問い合わせ送信処理用ルート
+Route::post('/inquiry/send', 
+[InquiryController::class, 'send'])->name('inquiry.send');
