@@ -22,3 +22,23 @@ Route::get('/mypage', function () { return view('mypage'); })->name('mypage');
 
 Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
 Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
+
+// マイページ
+Route::get('/mypage', function () {
+    return view('mypage');
+})->name('mypage');
+
+// プロフィールページ
+Route::get('/profile/edit', function () {
+    return view('profile.edit');
+})->name('profile.edit');
+
+// パスワードページ
+Route::get('/password/change', function () {
+    return view('password.change');
+})->name('password.change');
+
+// 問い合わせページ
+Route::get('/inquiry', function () {
+    return view('inquiry'); // resources/views/inquiry.blade.php
+})->name('inquiry');
