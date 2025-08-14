@@ -50,3 +50,7 @@ Route::get('/inquiry', function () {
 // お問い合わせ送信処理用ルート
 Route::post('/inquiry/send', 
 [InquiryController::class, 'send'])->name('inquiry.send');
+
+use App\Http\Controllers\SearchController;
+
+Route::get('/search', [SearchController::class, 'index'])->name('search');
