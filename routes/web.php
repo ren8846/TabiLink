@@ -15,23 +15,28 @@ use App\Http\Controllers\PostController;
 Route::get('/home', function () { return view('home'); })->name('home');
 Route::get('/search', function () { return '検索ページ'; })->name('search');
 Route::get('/post/create', function () { return '投稿作成ページ'; })->name('post.create');
-Route::get('/board', function () { return '掲示板ページ'; })->name('board');
-Route::get('/mypage', function () { return view('mypage'); })->name('mypage');
 
+use App\Http\Controllers\SearchController;
 
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
 Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
 
+// 掲示板ページ
+Route::get('/board', function () {
+    return view('board.index');
+})->name('board');
+
 // マイページ
 Route::get('/mypage', function () {
-    return view('mypage');
+    return view('mypage.index');
 })->name('mypage');
 
 // プロフィールページ
-Route::get('/profile/edit', function () {
-    return view('profile.edit');
-})->name('profile.edit');
+Route::get('/mypage/profile/edit', function () {
+    return view('mypage.profile.edit');
+})->name('mypage.profile.edit');
 
 // パスワードページ
 Route::get('/password/change', function () {
@@ -50,7 +55,3 @@ Route::get('/inquiry', function () {
 // お問い合わせ送信処理用ルート
 Route::post('/inquiry/send', 
 [InquiryController::class, 'send'])->name('inquiry.send');
-
-use App\Http\Controllers\SearchController;
-
-Route::get('/search', [SearchController::class, 'index'])->name('search');
