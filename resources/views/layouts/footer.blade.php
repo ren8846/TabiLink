@@ -8,7 +8,7 @@
      href='#' aria-label="Search">
     <i class="bi bi-search"></i>
   </a>
-  
+
 
   <a class="nav-link {{ request()->routeIs('post.*') ? 'active' : '' }}"
      href='#' aria-label="Create">
