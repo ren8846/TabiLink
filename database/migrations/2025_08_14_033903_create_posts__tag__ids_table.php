@@ -4,24 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('posts__tag__ids', function (Blueprint $table) {
-            $table->id();
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('post_tag_ids', function (Blueprint $table) {
+            $table->id('post_tag_id');
+            $table->string('post_stock_tag', 255); // タグ名
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('posts__tag__ids');
+    public function down(): void {
+        Schema::dropIfExists('post_tag_ids');
     }
 };

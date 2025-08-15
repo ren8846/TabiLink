@@ -4,24 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('working__holidays', function (Blueprint $table) {
-            $table->id();
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('working_holidays', function (Blueprint $table) {
+            $table->id('working_holiday_id');
+            $table->boolean('is_on_working_holiday')->default(false);
+            $table->boolean('has_done_working_holiday')->default(false);
+            $table->unsignedBigInteger('users_id');
             $table->timestamps();
+
+            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('working__holidays');
+    public function down(): void {
+        Schema::dropIfExists('working_holidays');
     }
 };

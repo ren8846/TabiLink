@@ -4,24 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('resort__works', function (Blueprint $table) {
-            $table->id();
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('resort_works', function (Blueprint $table) {
+            $table->id('resort_work_id');
+            $table->boolean('is_on_resort_work')->default(false);
+            $table->boolean('has_done_resort_work')->default(false);
+            $table->unsignedBigInteger('users_id');
             $table->timestamps();
+
+            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('resort__works');
+    public function down(): void {
+        Schema::dropIfExists('resort_works');
     }
 };

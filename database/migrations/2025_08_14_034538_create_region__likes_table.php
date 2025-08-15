@@ -4,24 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('region__likes', function (Blueprint $table) {
-            $table->id();
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('region_likes', function (Blueprint $table) {
+            $table->id('region_like_id');
+            $table->unsignedBigInteger('japan_id'); // 後でjapansにFK追加可
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('region__likes');
+    public function down(): void {
+        Schema::dropIfExists('region_likes');
     }
 };
