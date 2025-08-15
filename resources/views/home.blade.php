@@ -38,7 +38,7 @@
 
 <!-- 上部ナビ -->
 <nav class="navbar bg-white px-3">
-    <a href="#" class="me-auto"><i class="bi bi-geo-alt fs-4"></i></a>
+    <a href="{{ route('map') }}" class="me-auto"><i class="bi bi-geo-alt fs-4"></i></a>
     <span class="mx-auto fw-bold fs-5">TabiLink</span>
     <a href="#"><i class="bi bi-send fs-4"></i></a>
 </nav>

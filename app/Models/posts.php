@@ -11,4 +11,3 @@ class Post extends Model
     // テーブルに timestamps が無いなら:
     // public $timestamps = false;
 }
-

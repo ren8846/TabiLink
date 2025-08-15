@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home'); // まずはLaravel既定のwelcomeを出す
 });
 
 Route::get('/', function () {
@@ -55,3 +55,13 @@ Route::get('/inquiry', function () {
 // お問い合わせ送信処理用ルート
 Route::post('/inquiry/send', 
 [InquiryController::class, 'send'])->name('inquiry.send');
+
+// 地図ページ
+Route::get('/map', function () {
+    return view('map'); // resources/views/map.blade.php を表示
+})->name('map');
+
+// 地域ページ（共通ビューへ遷移）
+Route::get('/region/{slug}', function ($slug) {
+    return view('region', ['slug' => $slug]);
+})->name('region');
