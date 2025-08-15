@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -12,6 +11,12 @@ class PostController extends Controller
         // 全件取得
         $posts = Post::all();
         return response()->json($posts);
+    }
+  
+      // 投稿作成ページを表示
+    public function create()
+    {
+        return view('post.create'); // resources/views/post/create.blade.php を表示
     }
 
     public function store(Request $request)
