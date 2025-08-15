@@ -12,7 +12,7 @@
 
     <!-- メニュー項目 -->
     <div class="d-flex flex-column align-items-center gap-3">
-        <a href="{{ route('profile.edit') }}" class="menu-btn">プロフィール</a>
+        <a href="{{ route('mypage.profile.edit') }}" class="menu-btn">プロフィール</a>
         <a href="{{ route('password.change') }}" class="menu-btn">パスワード</a>
 
         <!-- 通知設定 ON/OFF -->
