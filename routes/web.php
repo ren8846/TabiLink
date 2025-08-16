@@ -61,59 +61,85 @@ Route::get('/map', function () {
     return view('regions.map'); // resources/views/map.blade.php を表示
 })->name('map');
 
+// 日本ページ
+Route::get('/japan', function () {
+    return view('regions.japan'); // resources/views/regions/japan.blade.php を作る
+})->name('japan');
 
-// 地域ページ共通
-Route::get('/region/{name}', function ($name) {
+// アジアページ
+Route::get('/asia', function () {
+    return view('regions.asia'); // resources/views/regions/asia.blade.php を作る
+})->name('asia');
 
-    $regions = [
-        'japan' => [
-            'title' => '日本',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Mount_Fuji_from_Hakone_2.jpg',
-            'description' => 'ここは日本のページです。観光情報や文化、地理などを紹介できます。',
-        ],
-        'asia' => [
-            'title' => 'アジア',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/6/69/Asia_satellite.jpg',
-            'description' => 'アジア地域の紹介ページです。',
-        ],
-        'europe' => [
-            'title' => '欧州',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/8/83/Europe_satellite.jpg',
-            'description' => '欧州地域の紹介ページです。',
-        ],
-        'northAmerica' => [
-            'title' => '北米',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/5/5b/North_America_satellite.jpg',
-            'description' => '北米地域の紹介ページです。',
-        ],
-        'latinAmerica' => [
-            'title' => '中南米',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Latin_America_satellite.jpg',
-            'description' => '中南米地域の紹介ページです。',
-        ],
-        'usa' => [
-            'title' => 'アメリカ',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/3/3e/USA_satellite.jpg',
-            'description' => 'アメリカの紹介ページです。',
-        ],
-        'middleEast' => [
-            'title' => '中東',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Middle_East_satellite.jpg',
-            'description' => '中東地域の紹介ページです。',
-        ],
-        'africa' => [
-            'title' => 'アフリカ',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/6/63/Africa_satellite.jpg',
-            'description' => 'アフリカ地域の紹介ページです。',
-        ],
-        'oceania' => [
-            'title' => '大洋州',
-            'image' => 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Oceania_satellite.jpg',
-            'description' => '大洋州地域の紹介ページです。',
-        ],
-    ];
+// 欧州
+Route::get('/europe', function () {
+    return view('regions.europe'); // resources/views/regions/europe.blade.php
+})->name('europe');
 
-    if (!isset($regions[$name])) abort(404);
+// 北米
+Route::get('/north-america', function () {
+    return view('regions.northAmerica'); // resources/views/regions/northAmerica.blade.php
+})->name('north-america');
 
-    return view('regions.region', ['region' => $regions[$name]]);
-});
+// 中南米
+Route::get('/latin-america', function () {
+    return view('regions.latinAmerica'); // resources/views/regions/latinAmerica.blade.php
+})->name('latin-america');
+
+// アメリカ
+Route::get('/usa', function () {
+    return view('regions.usa'); // resources/views/regions/usa.blade.php
+})->name('usa');
+
+// 中東
+Route::get('/middle-east', function () {
+    return view('regions.middleEast'); // resources/views/regions/middleEast.blade.php
+})->name('middle-east');
+
+// アフリカ
+Route::get('/africa', function () {
+    return view('regions.africa'); // resources/views/regions/africa.blade.php
+})->name('africa');
+
+// 大洋州
+Route::get('/oceania', function () {
+    return view('regions.oceania'); // resources/views/regions/oceania.blade.php
+})->name('oceania');
+
+
+// 都道府県ページ（例：北海道）
+Route::get('/region/hokkaido', function() {
+    return view('regions.hokkaido'); // resources/views/regions/hokkaido.blade.php を作成
+})->name('region.hokkaido');
+
+Route::get('/region/tohoku', function() {
+    return view('regions.tohoku');
+})->name('region.tohoku');
+
+Route::get('/region/kanto', function() {
+    return view('regions.kanto');
+})->name('region.kanto');
+
+Route::get('/region/hokuriku-tokai', function() {
+    return view('regions.hokuriku-tokai');
+})->name('region.hokuriku-tokai');
+
+Route::get('/region/kinki', function() {
+    return view('regions.kinki');
+})->name('region.kinki');
+
+Route::get('/region/chugoku', function() {
+    return view('regions.chugoku');
+})->name('region.chugoku');
+
+Route::get('/region/shikoku', function() {
+    return view('regions.shikoku');
+})->name('region.shikoku');
+
+Route::get('/region/kyushu', function() {
+    return view('regions.kyushu');
+})->name('region.kyushu');
+
+Route::get('/region/okinawa', function() {
+    return view('regions.okinawa');
+})->name('region.okinawa');
