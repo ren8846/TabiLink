@@ -1,4 +1,92 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
 
+/* 画面中央に寄せる“シェル” */
+.app-shell { max-width: 720px;
+     margin: 0 auto; 
+    }
+
+/* ヘッダー */
+.app-header { position: sticky; 
+    top: 0; 
+    z-index: 1030; 
+    background: #fff; 
+}
+
+.app-header-inner {
+  height: 56px;
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.app-title {
+  grid-column: 2;
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icon-btn {
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  width: 40px; 
+  height: 40px; 
+  color: #0d6efd; 
+  text-decoration: none; 
+  border-radius: 8px;
+}
+
+.icon-btn:hover {
+     background: #f7f7f8; 
+    }
+.icon-btn i {
+     font-size: 22px; 
+     line-height: 1;
+     }
+
+/* ボトムナビ */
+.bottom-nav {
+  position: fixed; 
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  z-index: 1030; 
+  background: #fff; /* iPhoneのセーフエリア対応 */
+  padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+}
+
+.bottom-nav-inner {
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center;
+  height: 48px;
+}
+.bottom-nav .nav-link {
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  width: 20%; 
+  height: 44px; 
+  color: #6c757d; 
+  text-decoration: none;
+}
+.bottom-nav .nav-link i { 
+    font-size: 22px; 
+    line-height: 1;
+ }
+.bottom-nav .nav-link.active { 
+    color: #0d6efd; 
+}
+
+/* ボトムナビに隠れないよう本文下に余白を足す */
+.main-has-bottom { 
+    padding-bottom: 72px;
+ }
