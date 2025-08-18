@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8">
   <title>日本</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     body {
       margin: 0;
       font-family: sans-serif;
+      overflow: hidden; /* 横スクロール禁止 */
     }
     .title-header {
       position: relative;
@@ -40,8 +42,10 @@
       font-size: 16px;
     }
     #map {
-      height: calc(100vh - 50px);
+      height: 100vh; 
       width: 100%;
+      max-width: 480px; /* iPhone画面幅に固定 */
+      margin: 0 auto; 
     }
     .label-icon { 
       background: white; 
@@ -56,41 +60,42 @@
 </head>
 <body>
 
-<!-- 戻るボタン＋中央タイトル -->
 <div class="title-header">
-   <a href="{{ route('map') }}" class="back-btn">
+   <a href="{{ route('regions.map') }}" class="back-btn">
     <i class="bi bi-arrow-left"></i>
-</a>
-    <h4>日本</h4>
+   </a>
+   <h4>日本</h4>
 </div>
 
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-  // 地図初期設定
   var map = L.map('map', { 
     zoomControl: false,
-    minZoom: 5,
-    maxZoom: 10
-  }).setView([37.5, 137.5], 5);
+    minZoom: 3,
+    maxZoom: 10,
+    dragging: false,  // ドラッグ不可
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    touchZoom: false
+  }).setView([37, 137], 4); // 少し広げる
 
-  // タイルレイヤー
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  // 都道府県マーカー
- var regions = [
-    { name: "北海道", lat: 43.06417, lng: 141.34694, url: "/region/hokkaido" },
-    { name: "東北", lat: 40.3, lng: 140.7, url: "/region/tohoku" }, // ← 左に移動
+  // 地域ラベル
+  var regions = [
+    { name: "北海道", lat: 44.5, lng: 141.34694, url: "/region/hokkaido" },
+    { name: "東北", lat: 40.3, lng: 140, url: "/region/tohoku" },
     { name: "関東", lat: 35.6895, lng: 139.6917, url: "/region/kanto" },
-    { name: "北陸・東海", lat: 36.2048, lng: 136.2529, url: "/region/hokuriku-tokai" },
-    { name: "近畿", lat: 34.68639, lng: 135.52, url: "/region/kinki" },
-    { name: "中国", lat: 35.3, lng: 132.459, url: "/region/chugoku" }, // ← 上に移動
+    { name: "北陸・東海", lat: 38, lng: 136.2529, url: "/region/hokuriku-tokai" }, // ← 緯度を36.8に上げた
+    { name: "近畿", lat: 35.5, lng: 135.52, url: "/region/kinki" },
+    { name: "中国", lat: 36, lng: 132.459, url: "/region/chugoku" },
     { name: "四国", lat: 33.84167, lng: 133.53111, url: "/region/shikoku" },
-    { name: "九州", lat: 32.78982, lng: 130.7417, url: "/region/kyushu" },
-    { name: "沖縄", lat: 26.2124, lng: 127.6809, url: "/region/okinawa" }
+    { name: "九州", lat: 32.78982, lng: 130, url: "/region/kyushu" },
+    { name: "沖縄", lat: 28.5, lng: 131.0, url: "/region/okinawa" }
 ];
 
   regions.forEach(r => {
@@ -104,12 +109,20 @@
   fetch('https://raw.githubusercontent.com/dataofjapan/land/master/japan.geojson')
     .then(res => res.json())
     .then(data => {
-      L.geoJSON(data, {
-        style: {
-          fillColor: '#f9f9f9',
-          color: '#555',
-          weight: 1
+      var offset = {lat: -5, lng: -3}; // 沖縄擬似配置
+      var adjusted = JSON.parse(JSON.stringify(data));
+      adjusted.features.forEach(f => {
+        if(f.properties.NAME === "沖縄") {
+          f.geometry.coordinates = f.geometry.coordinates.map(poly => 
+            poly.map(ring => 
+              ring.map(coord => [coord[0]+offset.lng, coord[1]+offset.lat])
+            )
+          );
         }
+      });
+
+      L.geoJSON(adjusted, {
+        style: { fillColor: '#f9f9f9', color: '#555', weight: 1 }
       }).addTo(map);
     });
 </script>
