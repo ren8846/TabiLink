@@ -2,6 +2,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 // ① 常にホームを見る
@@ -119,3 +120,7 @@ Route::get('/region/usa', function () {
 Route::get('/map', function () {
     return view('map'); // resources/views/map.blade.php を表示
 })->name('map');
+
+//検索画面
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+
