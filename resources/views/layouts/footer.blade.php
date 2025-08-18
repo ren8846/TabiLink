@@ -41,8 +41,8 @@
       </li>
 
       <li>
-        <a href="#"
-           class="flex flex-col items-center justify-center h-full text-gray-500 hover:text-gray-700">
+        <a href="{{ route('search.index') }}"
+          class="flex flex-col items-center justify-center h-full text-gray-500 hover:text-gray-700">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="11" cy="11" r="7"/><path d="m21 21-3.5-3.5"/>
           </svg>
