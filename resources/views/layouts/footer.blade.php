@@ -21,7 +21,7 @@
   </a>
 
   <a class="nav-link {{ request()->routeIs('mypage') ? 'active' : '' }}"
-     href='#' aria-label="My Page">
+    href='#' aria-label="My Page">
     <i class="bi bi-person"></i>
   </a>
 </nav> -->
@@ -31,7 +31,7 @@
     <ul class="grid grid-cols-5 h-14 items-center text-center text-xs">
       <li>
         <a href="{{ route('home') }}"
-           class="flex flex-col items-center justify-center h-full
+          class="flex flex-col items-center justify-center h-full
                   {{ request()->routeIs('home') ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700' }}">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v10h14V10"/>
@@ -80,7 +80,7 @@
 
 
       <li>
-        <a href="#"
+        <a href="{{ route('mypage.index') }}"
           class="flex flex-col items-center justify-center h-full text-gray-500 hover:text-gray-700">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="12" cy="8" r="3.2"/><path d="M4 20a8 8 0 0 1 16 0"/>

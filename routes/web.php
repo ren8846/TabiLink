@@ -1,9 +1,16 @@
 <?php
-use App\Http\Controllers\ProfileController;
+
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MypageController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\IconController;
+
 
 // ① 常にホームを見る
 Route::get('/home', fn () => view('home'))->name('home');
@@ -13,8 +20,8 @@ Route::get('/', fn () => redirect()->route('home'));
 
 // ③ /dashboard はホームへ寄せる（巨大ロゴ対策）
 Route::get('/dashboard', fn () => redirect()->route('home'))
-     ->middleware(['auth'])
-     ->name('dashboard');
+    ->middleware(['auth'])
+    ->name('dashboard');
 
 // ④ 認証エリア
 Route::middleware('auth')->group(function () {
@@ -124,3 +131,22 @@ Route::get('/map', function () {
 //検索画面
 Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 
+//マイページ
+Route::middleware('auth')->prefix('mypage')->name('mypage.')->group(function () {
+    Route::get('/', [MypageController::class, 'index'])->name('index');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/password', [PasswordController::class, 'edit'])->name('password.edit');
+    Route::patch('/password', [PasswordController::class, 'update'])->name('password.update');
+
+    Route::get('/notifications', [NotificationController::class, 'edit'])->name('notifications.edit');
+    Route::patch('/notifications', [NotificationController::class, 'update'])->name('notifications.update');
+
+    Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+    Route::get('/icon', [IconController::class, 'edit'])->name('icon.edit');
+    Route::post('/icon', [IconController::class, 'update'])->name('icon.update');
+});

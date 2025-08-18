@@ -2,59 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use App\Models\Post;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function edit()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user  = auth()->user();
+        $posts = Post::where('users_id', $user->id)->latest()->take(12)->get(); // サムネ用
+        return view('profile.edit', compact('user','posts'));
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
 
-        Auth::logout();
+        $data = $request->validate([
+            'name'     => ['nullable','string','max:255'],
+            'username' => ['nullable','string','max:255','unique:users,username,'.$user->id],
+            'gender'   => ['nullable','in:male,female'],
+            'bio'      => ['nullable','string','max:1000'],
+        ]);
 
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        $user->update($data);
+        return back()->with('status', 'プロフィールを更新しました');
     }
 }
