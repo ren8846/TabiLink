@@ -6,7 +6,7 @@
   <h2 class="h5 mb-3">ダイレクトメッセージ</h2>
 
   <div class="row g-3">
-    {{-- 左：会話一覧 --}}
+    <!-- {{-- 左：会話一覧 --}} -->
     <div class="col-12 col-md-4">
       <div class="card shadow-sm">
         <div class="card-header py-2">
@@ -15,9 +15,10 @@
         <ul class="list-group list-group-flush" style="max-height: 70vh; overflow:auto;">
           @forelse($conversations as $c)
             @php
-              $partner = $c->users->first(); // 自分以外（Controllerでフィルタ済み）
+              $partner = $c->users->first(); 
               $last = optional($c->messages->first());
             @endphp
+             <!-- 自分以外（Controllerでフィルタ済み） -->
             <a href="{{ route('dm.show', $c) }}"
                class="list-group-item list-group-item-action d-flex justify-content-between {{ optional($active)->id === $c->id ? 'active text-white' : '' }}">
               <div class="me-2">
@@ -37,7 +38,7 @@
       </div>
     </div>
 
-    {{-- 右：メッセージスレッド --}}
+    <!-- {{-- 右：メッセージスレッド --}} -->
     <div class="col-12 col-md-8">
       <div class="card shadow-sm">
         <div class="card-header py-2 d-flex align-items-center justify-content-between">
@@ -74,7 +75,7 @@
           @endif
         </div>
 
-        {{-- 送信フォーム --}}
+        <!-- {{-- 送信フォーム --}} -->
         <div class="card-footer">
           @if($active)
             <form action="{{ route('dm.message.store', $active) }}" method="post" id="sendForm">
