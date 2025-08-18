@@ -61,7 +61,7 @@
 <body>
 
 <div class="title-header">
-   <a href="{{ route('map') }}" class="back-btn">
+   <a href="{{ route('regions.map') }}" class="back-btn">
     <i class="bi bi-arrow-left"></i>
    </a>
    <h4>日本</h4>
