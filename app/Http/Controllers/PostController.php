@@ -12,18 +12,23 @@ class PostController extends Controller
         $posts = Post::all();
         return response()->json($posts);
     }
-  
+
       // 投稿作成ページを表示
     public function create()
     {
-        return view('post.create'); // resources/views/post/create.blade.php を表示
+        return view('posts.create'); // resources/views/post/create.blade.php を表示
     }
 
     public function store(Request $request)
     {
         // 新規作成
-        $post = Post::create($request->all());
-        return response()->json($post, 201);
+        $data = $request->validate([
+        'post_content' => ['required','string'],
+        'post_tag' => ['nullable','string','max:255'], 
+        ]);
+        $post = Post::create($data);
+        return redirect()->route('posts.create')->with('status', '投稿しました！');
+
     }
 
     public function show($id)

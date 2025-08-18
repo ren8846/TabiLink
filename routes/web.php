@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 // ① 常にホームを見る
@@ -20,9 +21,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create'); // 新規投稿画面
+Route::post('/posts', [PostController::class, 'store'])->name('posts.store');        
+Route::get('/whoami', fn() => ['auth' => auth()->check(), 'id' => optional(auth()->user())->id]);
 // 画面遷移用のスタブ
 Route::get('/map', fn () => view('map'))->name('map');
 Route::get('/dm',  fn () => view('dm'))->name('dm');
+
 
 
 require __DIR__.'/auth.php';
