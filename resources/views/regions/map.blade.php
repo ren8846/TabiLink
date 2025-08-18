@@ -79,7 +79,7 @@
     zoomSnap: 0.1,
     zoomControl: false,
     worldCopyJump: true
-  }).setView([30, 140], 2); // ← ズーム縮小
+  }).setView([30, 140], 1.5); // ← ズーム縮小
 
   // --- OpenStreetMap タイル ---
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -89,15 +89,15 @@
 
   // --- マーカー ---
   var locations = [
-    { name: "日本", lat: 35.6762, lng: 139.6503, url: "/japan" },
-    { name: "アジア", lat: 34.0479, lng: 100.6197, url: "/asia" },
-    { name: "欧州", lat: 48.8566, lng: 2.3522, url: "/europe" },
-    { name: "北米", lat: 37.0902, lng: -95.7129 + 360, url: "/north-america" }, 
-    { name: "中南米", lat: -14.2350, lng: -51.9253 + 360, url: "/latin-america" },
-    { name: "アメリカ", lat: 38.9072, lng: -77.0369 + 360, url: "/usa" },
-    { name: "中東", lat: 25.276987, lng: 55.296249, url: "/middle-east" },
-    { name: "アフリカ", lat: 1.6508, lng: 10.2679, url: "/africa" },
-    { name: "大洋州", lat: -25.2744, lng: 133.7751, url: "/oceania" }
+    { name: "日本", lat: 35.6762, lng: 139.6503, url: "/region/japan" },
+    { name: "アジア", lat: 34.0479, lng: 100.6197, url: "/region/asia" },
+    { name: "欧州", lat: 48.8566, lng: 2.3522, url: "/region/europe" },
+    { name: "北米", lat: 37.0902, lng: -95.7129 + 360, url: "/region/northamerica" }, 
+    { name: "中南米", lat: -14.2350, lng: -51.9253 + 360, url: "/region/latinamerica" },
+    { name: "アメリカ", lat: 38.9072, lng: -77.0369 + 360, url: "/region/usa" },
+    { name: "中東", lat: 25.276987, lng: 55.296249, url: "/region/middleeast" },
+    { name: "アフリカ", lat: 1.6508, lng: 10.2679, url: "/region/africa" },
+    { name: "大洋州", lat: -25.2744, lng: 133.7751, url: "/region/oceania" }
   ];
 
   locations.forEach(loc => {
