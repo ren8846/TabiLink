@@ -61,14 +61,23 @@
       </li>
 
       <li>
-        <a href="#"
-           class="flex flex-col items-center justify-center h-full text-gray-500 hover:text-gray-700">
+        <a href="{{ route('board') }}"
+            class="flex flex-col items-center justify-center h-full
+                   {{ request()->routeIs('board*') ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700' }}"
+            aria-label="掲示板" title="掲示板">
+    <!-- {{-- bulletin board icon --}} -->
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M21 12a8 8 0 1 1-3-6.2L21 5l-.2 3A7.9 7.9 0 0 1 21 12Z"/><path d="M7 17l-4 2 1-4"/>
+           <!-- 外枠（掲示板） -->
+            <rect x="3.5" y="5" width="17" height="14" rx="2.5" />
+           <!-- ピン -->
+            <circle cx="12" cy="7.5" r="1.3" />
+           <!-- 投稿の横線 -->
+            <path d="M7 11h10M7 14h10M7 17h6" />
           </svg>
-          <span>チャット</span>
+          <span>掲示板</span>
         </a>
       </li>
+
 
       <li>
         <a href="#"
@@ -76,7 +85,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="12" cy="8" r="3.2"/><path d="M4 20a8 8 0 0 1 16 0"/>
           </svg>
-          <span>マイ</span>
+          <span>マイページ</span>
         </a>
       </li>
     </ul>

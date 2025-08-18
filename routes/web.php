@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BoardController;
 use Illuminate\Support\Facades\Route;
 
 // ① 常にホームを見る
@@ -24,5 +25,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/map', fn () => view('map'))->name('map');
 Route::get('/dm',  fn () => view('dm'))->name('dm');
 
+Route::get('/board', [BoardController::class, 'index'])->name('board');
 
 require __DIR__.'/auth.php';
