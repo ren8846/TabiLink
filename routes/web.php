@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BoardController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,7 @@ Route::get('/whoami', fn() => ['auth' => auth()->check(), 'id' => optional(auth(
 Route::get('/map', fn () => view('map'))->name('map');
 Route::get('/dm',  fn () => view('dm'))->name('dm');
 
+Route::get('/board', [BoardController::class, 'index'])->name('board');
 
 
 require __DIR__.'/auth.php';
