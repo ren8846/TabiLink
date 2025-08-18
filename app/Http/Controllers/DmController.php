@@ -3,58 +3,96 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Conversation;
+use App\Models\Message;
+use App\Events\MessageSent;
 
-class DmController extends Controller
+class DMController extends Controller
 {
-   public function index(Request $request){
-    $user = auth()->user();
+    // DM一覧（左ペイン）
+    public function index(Request $request)
+    {
+        $me = $request->user();
 
-    $conversations = $user->conversations()
-        ->with(['users' => fn($q) => $q->where('users.id', '!=', $user->id)])
-        ->with(['messages' => fn($q) => $q->latest()->limit(1)])
-        ->latest('conversations.updated_at')
-        ->get();
+        // 自分が参加している会話一覧（最新更新順）
+        $conversations = Conversation::with([
+                'users'    => fn ($q) => $q->select('users.id', 'users.username'),
+                'messages' => fn ($q) => $q->latest(),
+            ])
+            ->whereHas('users', fn ($q) => $q->where('users.id', $me->id))
+            ->latest('updated_at')
+            ->get();
 
-    $active = $conversations->first();
+        // 右ペインは未選択の状態
+        return view('dm', [
+            'conversations' => $conversations,
+            'active'        => null,
+            'messages'      => collect(),
+        ]);
+    }
 
-    $messages = $active
-        ? \App\Models\Message::with('user')
-            ->where('conversation_id', $active->id)
-            ->latest()
-            ->take(50)
-            ->get()->reverse()
-        : collect();
+    // 会話詳細（右ペイン）
+    public function show(Request $request, Conversation $conversation)
+    {
+        $me = $request->user();
 
-    // ★ここが重要：view に3つ渡す
-    return view('dm', [
-        'conversations' => $conversations,
-        'active'        => $active,
-        'messages'      => $messages,
-    ]);
-}
+        // 自分が会話の参加者でなければ404
+        abort_unless($conversation->users()->where('users.id', $me->id)->exists(), 404);
 
-public function show(\App\Models\Conversation $conversation)
-{
-    $this->authorizeAccess($conversation);
+        // 左ペイン用：一覧も毎回渡す（更新順）
+        $conversations = Conversation::with([
+                'users'    => fn ($q) => $q->select('users.id', 'users.username'),
+                'messages' => fn ($q) => $q->latest(),
+            ])
+            ->whereHas('users', fn ($q) => $q->where('users.id', $me->id))
+            ->latest('updated_at')
+            ->get();
 
-    $user = auth()->user();
+        // 右ペイン用：対象会話のメッセージ（古い→新しい）
+        $messages = $conversation->messages()
+            ->with('user:id,username')
+            ->orderBy('created_at')
+            ->get();
 
-    $conversations = $user->conversations()
-        ->with(['users' => fn($q) => $q->where('users.id', '!=', $user->id)])
-        ->with(['messages' => fn($q) => $q->latest()->limit(1)])
-        ->latest('conversations.updated_at')
-        ->get();
+        return view('dm', [
+            'conversations' => $conversations,
+            'active'        => $conversation,
+            'messages'      => $messages,
+        ]);
+    }
 
-    $messages = \App\Models\Message::with('user')
-        ->where('conversation_id', $conversation->id)
-        ->latest()
-        ->take(100)
-        ->get()->reverse();
+    // メッセージ送信
+    public function store(Request $request, Conversation $conversation)
+    {
+        $me = $request->user();
 
-    return view('dm', [
-        'conversations' => $conversations,
-        'active'        => $conversation,
-        'messages'      => $messages,
-    ]);
-   } // 
+        // 参加者チェック
+        abort_unless($conversation->users()->where('users.id', $me->id)->exists(), 404);
+
+        $data = $request->validate([
+            'body' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $message = new Message();
+        $message->conversation_id = $conversation->id;
+        $message->user_id = $me->id;
+        $message->body = $data['body'];
+        $message->save();
+
+        // 一覧の並び替えのため updated_at を更新
+        $conversation->touch();
+
+        // （任意）リアルタイム配信するならイベントを発火
+        foreach ($recipientIds as $toUserId) {
+            broadcast(new MessageSent([
+                'id'              => $message->id,
+                'conversation_id' => $conversation->id,
+                'from_user_id'    => auth()->id(),
+                'body'            => $message->body,
+                'sent_at'         => $message->created_at->toISOString(),
+            ], (int)$toUserId))->toOthers();
+        }
+
+        return redirect()->route('dm.show', $conversation)->with('sent', true);
+    }
 }

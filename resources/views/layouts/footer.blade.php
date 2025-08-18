@@ -1,31 +1,3 @@
-<!-- <nav class="bottom-nav nav justify-content-around bg-white border-top" aria-label="Bottom navigation">
-  <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
-     href="{{ route('home') }}" aria-label="Home">
-    <i class="bi bi-house"></i>
-  </a>
-
-  <a class="nav-link {{ request()->routeIs('search') ? 'active' : '' }}"
-     href='#' aria-label="Search">
-    <i class="bi bi-search"></i>
-  </a>
-
-
-  <a class="nav-link {{ request()->routeIs('post.*') ? 'active' : '' }}"
-     href='#' aria-label="Create">
-    <i class="bi bi-plus-square"></i>
-  </a>
-
-  <a class="nav-link {{ request()->routeIs('chat.*') ? 'active' : '' }}"
-     href='#' aria-label="Chat">
-    <i class="bi bi-chat-dots"></i>
-  </a>
-
-  <a class="nav-link {{ request()->routeIs('mypage') ? 'active' : '' }}"
-     href='#' aria-label="My Page">
-    <i class="bi bi-person"></i>
-  </a>
-</nav> -->
-
 <footer class="fixed bottom-0 inset-x-0 bg-white border-t">
   <nav class="max-w-7xl mx-auto px-2">
     <ul class="grid grid-cols-5 h-14 items-center text-center text-xs">
@@ -80,7 +52,7 @@
 
 
       <li>
-        <a href="#"
+        <a href="{{ route('mypage') }}"
            class="flex flex-col items-center justify-center h-full text-gray-500 hover:text-gray-700">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="12" cy="8" r="3.2"/><path d="M4 20a8 8 0 0 1 16 0"/>
