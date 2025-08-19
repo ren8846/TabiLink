@@ -19,15 +19,28 @@
     <!-- {{-- 右：DM --}} -->
     @if (Route::has('dm.index')) 
       <a href="{{ route('dm.index') }}"
-         class="p-2 rounded hover:bg-gray-100 {{ request()->routeIs('dm.*') ? 'text-blue-600' : 'text-gray-700' }}"
-         aria-label="DM" title="DM">
-        <i class="bi bi-chat-dots text-xl"></i> {{-- Tailwindでサイズ指定 --}}
+        class="relative p-2 rounded hover:bg-gray-100 {{ request()->routeIs('dm.*') ? 'text-blue-600' : 'text-gray-700' }}"
+        aria-label="DM" title="DM">
+        <i class="bi bi-chat-dots text-xl"></i>
         <span class="sr-only">DM</span>
+
+        <!-- {{-- 未読バッジ（AppServiceProvider で $dmUnreadTotal を渡している前提） --}} -->
+        @isset($dmUnreadTotal)
+          @if($dmUnreadTotal > 0)
+            <span
+              class="absolute -top-1 -right-1 inline-flex items-center justify-center
+                    h-5 px-1.5 text-xs font-semibold rounded-full bg-red-600 text-white
+                    ring-2 ring-white">
+              {{ $dmUnreadTotal > 99 ? '99+' : $dmUnreadTotal }}
+            </span>
+          @endif
+        @endisset
       </a>
     @else
       <span class="p-2 text-gray-400" aria-hidden="true">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><circle cx="12" cy="12" r="10" fill="currentColor"/></svg>
       </span>
     @endif
+
   </div>
 </header>
