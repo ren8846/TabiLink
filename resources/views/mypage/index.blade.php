@@ -13,16 +13,20 @@
     <!-- メニュー項目 -->
     <div class="d-flex flex-column align-items-center gap-3">
         <a href="{{ route('mypage.profile.edit') }}" class="menu-btn">プロフィール</a>
-        <a href="{{ route('password.change') }}" class="menu-btn">パスワード</a>
+        <a href="{{ route('mypage.password.edit') }}" class="menu-btn">パスワード</a>
 
         <!-- 通知設定 ON/OFF -->
-        <div class="menu-btn d-flex justify-content-between align-items-center">
-            <span>通知設定</span>
-            <button id="notification-toggle" type="button" class="btn btn-secondary btn-sm">OFF</button>
-        </div>
+        <a href="{{ route('mypage.notifications.edit') }}"
+        class="menu-btn d-flex justify-content-between align-items-center">
+        <span>通知設定</span>
+        <span class="badge bg-secondary">
+        {{ auth()->user()->notify_enabled ? 'ON' : 'OFF' }}
+        </span>
+        </a>
 
-        <a href="{{ route('inquiry') }}" class="menu-btn">問い合わせ</a>
-        <a href="#" class="menu-btn text-danger">ログアウト</a>
+
+        <a href="{{ route('mypage.contact.create') }}" class="menu-btn">問い合わせ</a>
+        <a href="{{ route('mypage.index') }}" class="menu-btn text-danger">ログアウト</a>
     </div>
 </div>
 

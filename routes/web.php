@@ -1,16 +1,32 @@
 <?php
-use App\Http\Controllers\ProfileController;
+
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DMController;
+use App\Http\Controllers\MypageController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\IconController;
+
+
 
 require __DIR__.'/auth.php';
+
 
 // ルート（トップ）: ログイン有無で出し分け
 Route::get('/', fn () => auth()->check()
     ? redirect()->route('home')
     : redirect()->route('login'));
+
+// ③ /dashboard はホームへ寄せる（巨大ロゴ対策）
+Route::get('/dashboard', fn () => redirect()->route('home'))
+    ->middleware(['auth'])
+    ->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     // ホーム（ログイン必須）
@@ -129,4 +145,10 @@ Route::middleware('auth')->group(function () {
         return view('regions/usa'); 
     })->name('region.usa');
 
-});
+
+
+//検索画面
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+
+
+
