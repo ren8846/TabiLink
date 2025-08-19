@@ -17,11 +17,11 @@
     <h1 class="text-lg font-semibold text-gray-800">TabiLink</h1>
 
     <!-- {{-- 右：DM --}} -->
-    @if (Route::has('dm'))
-      <a href="{{ route('dm') }}" class="p-2 rounded hover:bg-gray-100" aria-label="DM">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7Z"/>
-        </svg>
+    @if (Route::has('dm.index')) 
+      <a href="{{ route('dm.index') }}"
+         class="p-2 rounded hover:bg-gray-100 {{ request()->routeIs('dm.*') ? 'text-blue-600' : 'text-gray-700' }}"
+         aria-label="DM" title="DM">
+        <i class="bi bi-chat-dots text-xl"></i> {{-- Tailwindでサイズ指定 --}}
         <span class="sr-only">DM</span>
       </a>
     @else
