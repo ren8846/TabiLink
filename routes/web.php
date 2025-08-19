@@ -60,6 +60,9 @@ Route::middleware('auth')->group(function () {
     // 送信（会話IDに紐づけて投稿）← route('dm.message.store', $active) と一致
     Route::post('/dm/{conversation}/messages', [DMController::class, 'store'])->name('dm.message.store');
 
+    Route::get('/dm/{conversation}/messages', [DMController::class, 'fetch'])
+    ->name('dm.messages.fetch');
+
     Route::get('/map', function () {
         return view('map'); 
     })->name('map');

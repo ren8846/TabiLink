@@ -14,7 +14,6 @@ class DMController extends Controller
     {
         $me = $request->user();
 
-        // 自分が参加している会話一覧（最新更新順）
         $conversations = Conversation::with([
                 'users'    => fn ($q) => $q->select('users.id', 'users.username'),
                 'messages' => fn ($q) => $q->latest(),
@@ -23,7 +22,6 @@ class DMController extends Controller
             ->latest('updated_at')
             ->get();
 
-        // 右ペインは未選択の状態
         return view('dm', [
             'conversations' => $conversations,
             'active'        => null,
@@ -36,10 +34,12 @@ class DMController extends Controller
     {
         $me = $request->user();
 
-        // 自分が会話の参加者でなければ404
         abort_unless($conversation->users()->where('users.id', $me->id)->exists(), 404);
 
-        // 左ペイン用：一覧も毎回渡す（更新順）
+
+    //  開いた人を既読に
+        $conversation->users()->updateExistingPivot($me->id, ['last_read_at' => now()]);
+
         $conversations = Conversation::with([
                 'users'    => fn ($q) => $q->select('users.id', 'users.username'),
                 'messages' => fn ($q) => $q->latest(),
@@ -48,7 +48,6 @@ class DMController extends Controller
             ->latest('updated_at')
             ->get();
 
-        // 右ペイン用：対象会話のメッセージ（古い→新しい）
         $messages = $conversation->messages()
             ->with('user:id,username')
             ->orderBy('created_at')
@@ -73,26 +72,61 @@ class DMController extends Controller
             'body' => ['required', 'string', 'max:2000'],
         ]);
 
-        $message = new Message();
-        $message->conversation_id = $conversation->id;
-        $message->user_id = $me->id;
-        $message->body = $data['body'];
-        $message->save();
+        // 保存
+        $message = $conversation->messages()->create([
+            'user_id' => $me->id,
+            'body'    => $data['body'],
+        ]);
 
         // 一覧の並び替えのため updated_at を更新
         $conversation->touch();
 
-        // （任意）リアルタイム配信するならイベントを発火
-        foreach ($recipientIds as $toUserId) {
-            broadcast(new MessageSent([
+        $partnerId = $conversation->users()
+            ->where('users.id','!=',$me->id)
+            ->value('users.id');
+
+        if ($partnerId) {
+            broadcast(new \App\Events\MessageSent([
                 'id'              => $message->id,
                 'conversation_id' => $conversation->id,
-                'from_user_id'    => auth()->id(),
+                'from_user_id'    => $me->id,
+                'from_username'   => $me->username ?? $me->name, // ★ 追加
                 'body'            => $message->body,
                 'sent_at'         => $message->created_at->toISOString(),
-            ], (int)$toUserId))->toOthers();
+            ], (int)$partnerId))->toOthers();
         }
 
         return redirect()->route('dm.show', $conversation)->with('sent', true);
     }
+    public function fetch(Request $request, Conversation $conversation)
+    {
+        $me = $request->user();
+        abort_unless($conversation->users()->where('users.id',$me->id)->exists(), 404);
+
+        $beforeId = (int) $request->query('before', 0); // このIDより古いもの
+        $limit    = min(30, (int) $request->query('limit', 20));
+
+        $q = $conversation->messages()
+            ->with('user:id,username')
+            ->orderByDesc('id');
+
+        if ($beforeId > 0) {
+            $q->where('id', '<', $beforeId);
+        }
+
+        // 返却は古い→新しい順にする（prepend しやすい）
+        $chunk = $q->take($limit)->get()->sortBy('id')->values();
+
+        return response()->json([
+            'messages' => $chunk->map(fn($m) => [
+                'id'        => $m->id,
+                'user_id'   => $m->user_id,
+                'username'  => $m->user?->username ?? 'ユーザー',
+                'body'      => $m->body,
+                'created_at'=> $m->created_at->toISOString(),
+            ]),
+            'done' => $chunk->count() < $limit,
+        ]);
+    }
+
 }
