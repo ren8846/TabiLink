@@ -1,5 +1,5 @@
 <div class="container my-4">
-     <!-- 戻るボタンとタイトル -->
+    <!-- 戻るボタンとタイトル -->
     <div class="d-flex align-items-center mb-4">
         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary me-3">
             <i class="bi bi-arrow-left"></i>
@@ -9,7 +9,7 @@
 
 
     <!-- フォーム部分 -->
-    <form action="{{ route('password.update') }}" method="POST">
+    <form action="{{ route('mypage.password.update') }}" method="POST">
         @csrf
 
         <!-- 新しいパスワード -->
