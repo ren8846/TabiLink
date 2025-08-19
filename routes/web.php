@@ -37,42 +37,18 @@ require __DIR__.'/auth.php';
 
 
 # 日本
-Route::get('/region/chugoku', function () {
-    return view('regions/japan/chugoku'); 
-})->name('region.chugoku');
 
-Route::get('/region/hokkaido', function () {
-    return view('regions/japan/hokkaido'); 
-})->name('region.hokkaido');
+use App\Http\Controllers\JapanController;
 
-Route::get('/region/hokuriku-tokai', function () {
-    return view('regions/japan/hokuriku-tokai'); 
-})->name('region.hkuriku-tokai');
-
-Route::get('/region/kanto', function () {
-    return view('regions/japan/kanto'); 
-})->name('region.kanto');
-
-Route::get('/region/kinki', function () {
-    return view('regions/japan/kinki'); 
-})->name('region.kinki');
-
-Route::get('/region/kyushu', function () {
-    return view('regions/japan/kyushu'); 
-})->name('region.kyushu');
-
-Route::get('/region/okinawa', function () {
-    return view('regions/japan/okinawa'); 
-})->name('region.okinawa');
-
-Route::get('/region/shikoku', function () {
-    return view('regions/japan/shikoku'); 
-})->name('region.shikoku');
-
-Route::get('/region/tohoku', function () {
-    return view('regions/japan/tohoku'); 
-})->name('region.tohoku');
-
+Route::get('/region/kanto', [JapanController::class, 'showKanto'])->name('region.kanto');
+Route::get('/region/kinki', [JapanController::class, 'showkinki'])->name('region.kinki');
+Route::get('/region/tohoku', [JapanController::class, 'showtohoku'])->name('region.tohoku');
+Route::get('/region/chugoku', [JapanController::class, 'showchugoku'])->name('region.chugoku');
+Route::get('/region/shikoku', [JapanController::class, 'showshikoku'])->name('region.shikoku');
+Route::get('/region/kyushu', [JapanController::class, 'showkyushu'])->name('region.kyushu');
+Route::get('/region/okinawa', [JapanController::class, 'showokinawa'])->name('region.okinawa');
+Route::get('/region/hokkaido', [JapanController::class, 'showhokkaido'])->name('region.hokkaido');
+Route::get('/region/hokuriku-tokai', [JapanController::class, 'showhokurikutokai'])->name('region.hokuriku-tokai');
 
 
 # 海外

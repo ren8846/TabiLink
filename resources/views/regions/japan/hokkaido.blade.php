@@ -8,22 +8,15 @@
     <style>
         body { margin: 0; font-family: sans-serif; }
         .container { margin-top: 20px; }
-        .menu-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 260px;
-            padding: 12px 16px;
-            background-color: #f0f9ff;
-            border: 1px solid #90caf9;
+        .job-card {
+            width: 100%;
+            max-width: 600px;
+            padding: 16px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
             border-radius: 12px;
-            font-weight: bold;
-            color: #0d47a1;
-            transition: all 0.2s;
-            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
-        .menu-btn:hover { background-color: #bbdefb; }
-        .accordion-body { font-size: 14px; }
         .job-link {
             display: inline-block;
             margin-top: 8px;
@@ -50,102 +43,38 @@
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="container d-flex flex-column align-items-center">
+        <!-- タイトルと戻るボタン -->
+        <div class="d-flex align-items-center mb-4 position-relative w-100">
+            <a href="{{ url()->previous() }}" class="btn btn-outline-secondary position-absolute start-0">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h4 class="mx-auto">{{ $region }}</h4>
+        </div>
 
-   <!-- タイトルと戻るボタン -->
-   <div class="d-flex align-items-center mb-4 position-relative">
-       <a href="{{ url()->previous() }}" class="btn btn-outline-secondary position-absolute start-0">
-           <i class="bi bi-arrow-left"></i>
-       </a>
-       <h4 class="mx-auto">北海道</h4>
-   </div>
+        <!-- DBのデータを使った県ごとの表示 -->
+        @php
+            $jobsByPrefecture = $jobs->groupBy('prefecture');
+        @endphp
 
-    <!-- エリアボタン -->
-    <div class="d-flex flex-column align-items-center gap-3" id="area-buttons">
-        <!-- JSで自動生成 -->
-    </div>
+        @foreach($jobsByPrefecture as $prefecture => $jobsInPref)
+            <div class="job-card my-3 text-center">
+                <h5 class="mb-3">{{ $prefecture }}</h5>
+                <p>この県でリゾートバイトしている人数: 
+                    <span class="worker-count">{{ $jobsInPref->sum('workers') }}人</span>
+                </p>
 
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    const areaData = {
-        "道央（札幌・小樽など）": { workers: 620, jobs: [
-            {title:"ホテルフロント（札幌市）", salary:"月給22万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/hokkaido-sapporo.jpg", url:"https://resortbaito-dive.com/offer/hokkaido-sapporo"},
-            {title:"温泉旅館スタッフ（定山渓）", salary:"月給20万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/hokkaido-onsen.jpg", url:"https://resortbaito-dive.com/offer/hokkaido-onsen"}
-        ]},
-        "道南（函館・登別・洞爺湖）": { workers: 480, jobs: [
-            {title:"リゾートホテルスタッフ（函館）", salary:"月給21万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/hokkaido-hakodate.jpg", url:"https://resortbaito-dive.com/offer/hokkaido-hakodate"},
-            {title:"温泉スタッフ（登別）", salary:"月給20万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/hokkaido-noboribetsu.jpg", url:"https://resortbaito-dive.com/offer/hokkaido-noboribetsu"}
-        ]},
-        "道北（旭川・富良野・稚内）": { workers: 510, jobs: [
-            {title:"ホテルレストランスタッフ（富良野）", salary:"月給22万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/hokkaido-furano.jpg", url:"https://resortbaito-dive.com/offer/hokkaido-furano"},
-            {title:"スキー場スタッフ（旭川）", salary:"月給21万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/hokkaido-asahikawa.jpg", url:"https://resortbaito-dive.com/offer/hokkaido-asahikawa"}
-        ]},
-        "道東（釧路・網走・知床）": { workers: 390, jobs: [
-            {title:"観光ガイド補助（知床）", salary:"月給20万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/hokkaido-shiretoko.jpg", url:"https://resortbaito-dive.com/offer/hokkaido-shiretoko"},
-            {title:"ホテル清掃（釧路）", salary:"月給19万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/hokkaido-kushiro.jpg", url:"https://resortbaito-dive.com/offer/hokkaido-kushiro"}
-        ]},
-        "ニセコ": { workers: 450, jobs: [
-            {title:"スキー場リゾートスタッフ（ニセコ）", salary:"月給25万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/niseko-ski.jpg", url:"https://resortbaito-dive.com/offer/niseko-ski"},
-            {title:"ホテルスタッフ（ニセコ）", salary:"月給23万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/niseko-hotel.jpg", url:"https://resortbaito-dive.com/offer/niseko-hotel"}
-        ]},
-        "トマム": { workers: 300, jobs: [
-            {title:"リゾートスタッフ（トマム）", salary:"月給24万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/tomamu-resort.jpg", url:"https://resortbaito-dive.com/offer/tomamu-resort"},
-            {title:"レストランスタッフ（トマム）", salary:"月給22万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/tomamu-restaurant.jpg", url:"https://resortbaito-dive.com/offer/tomamu-restaurant"}
-        ]}
-    };
-
-    const container = document.getElementById('area-buttons');
-
-    Object.keys(areaData).forEach(area => {
-        const btn = document.createElement('div');
-        btn.classList.add('menu-btn');
-        btn.dataset.area = area;
-        btn.textContent = area;
-        container.appendChild(btn);
-    });
-
-    container.addEventListener('click', function(e){
-        const btn = e.target.closest('.menu-btn');
-        if(!btn) return;
-
-        const area = btn.dataset.area;
-        const existing = btn.nextElementSibling;
-        if (existing && existing.classList.contains('accordion-body')) {
-            existing.remove();
-            return;
-        }
-
-        const info = areaData[area];
-        const body = document.createElement('div');
-        body.classList.add('accordion-body');
-        body.style.margin = '5px 0 15px 0';
-        body.style.padding = '10px';
-        body.style.backgroundColor = '#f8f9fa';
-        body.style.border = '1px solid #dee2e6';
-        body.style.borderRadius = '8px';
-
-        const jobList = info.jobs.map(job => `
-            <div>
-                <img src="${job.img}" class="job-image" alt="${job.title}">
-                <p><strong>${job.title}</strong></p>
-                <p class="salary">推定給料: ${job.salary}</p>
-                <a href="${job.url}" target="_blank" class="job-link">求人ページへ</a>
+                @foreach($jobsInPref as $job)
+                    <div class="mb-4">
+                        <img src="{{ $job->image_url }}" class="job-image mx-auto d-block" alt="{{ $job->facility_name }}">
+                        <p><strong>{{ $job->facility_name }}</strong></p>
+                        <p class="salary">推定給料: {{ $job->salary }}円</p>
+                        <a href="{{ $job->url }}" target="_blank" class="job-link">求人ページへ</a>
+                    </div>
+                    <hr>
+                @endforeach
             </div>
-            <hr>
-        `).join('');
-
-        body.innerHTML = `
-            <p>このエリアでリゾートバイトしている人数: <span class="worker-count">${info.workers}人</span></p>
-            ${jobList}
-        `;
-
-        btn.insertAdjacentElement('afterend', body);
-        body.scrollIntoView({behavior:'smooth'});
-    });
-});
-</script>
+        @endforeach
+    </div>
 </body>
 </html>

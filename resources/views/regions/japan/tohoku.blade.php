@@ -47,116 +47,45 @@
             border-radius: 8px;
             margin-bottom: 10px;
         }
-        .back-btn {
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            font-size: 20px;
-            color: #0d6efd;
-            text-decoration: none;
-        }
-        .back-btn:hover {
-            color: #0a58ca;
-        }
     </style>
 </head>
 <body>
-<div class="container">
-
+     <div class="container d-flex flex-column align-items-center">
    <!-- タイトルと戻るボタン -->
-<div class="d-flex align-items-center mb-4 position-relative">
-    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary position-absolute start-0">
-        <i class="bi bi-arrow-left"></i>
-    </a>
-    <h4 class="mx-auto">東北</h4>
+   <div class="d-flex align-items-center mb-4 position-relative w-100">
+       <a href="{{ url()->previous() }}" class="btn btn-outline-secondary position-absolute start-0">
+           <i class="bi bi-arrow-left"></i>
+       </a>
+       <h4 class="mx-auto">{{ $region }}</h4>
+   </div>
+
+   @php
+    $jobsByPrefecture = $jobs->groupBy('prefecture');
+   @endphp
+
+   @foreach($jobsByPrefecture as $prefecture => $jobsInPref)
+       <div class="menu-btn my-3 w-100" style="max-width:600px; flex-direction: column; text-align:center;">
+           <p class="mb-2">{{ $prefecture }}</p>
+
+           <div class="accordion-body mt-2">
+               <p>
+                   この県でリゾートバイトしている人数: 
+                   <span class="worker-count">{{ $jobsInPref->sum('workers') }}人</span>
+               </p>
+
+               @foreach($jobsInPref as $job)
+                   <div class="mb-4">
+                       <img src="{{ $job->image_url }}" class="job-image mx-auto d-block" alt="{{ $job->facility_name }}">
+                       <p><strong>{{ $job->facility_name }}</strong></p>
+                       <p class="salary">推定給料: {{ $job->salary }}円</p>
+                       <a href="{{ $job->url }}" target="_blank" class="job-link">求人ページへ</a>
+                   </div>
+                   <hr>
+               @endforeach
+           </div>
+       </div>
+   @endforeach
 </div>
 
-    <!-- 県ボタン -->
-    <div class="d-flex flex-column align-items-center gap-3" id="prefecture-buttons">
-        <!-- JSが自動生成 -->
-    </div>
-
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    const prefectureData = {
-        "青森県": { workers: 240, jobs: [
-            {title:"温泉旅館フロントスタッフ", salary:"月給20万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/aomori-onsen.jpg", url:"https://resortbaito-dive.com/offer/aomori-onsen"},
-            {title:"スキー場リフト係", salary:"月給18万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/aomori-ski.jpg", url:"https://resortbaito-dive.com/offer/aomori-ski"}
-        ]},
-        "岩手県": { workers: 320, jobs: [
-            {title:"ホテル清掃スタッフ", salary:"月給19万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/iwate-hotel-clean.jpg", url:"https://resortbaito-dive.com/offer/iwate-clean"},
-            {title:"調理補助", salary:"月給21万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/iwate-cook.jpg", url:"https://resortbaito-dive.com/offer/iwate-cook"}
-        ]},
-        "宮城県": { workers: 410, jobs: [
-            {title:"リゾートホテルフロント", salary:"月給22万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/miyagi-hotel.jpg", url:"https://resortbaito-dive.com/offer/miyagi-front"},
-            {title:"プール監視員", salary:"月給18万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/miyagi-pool.jpg", url:"https://resortbaito-dive.com/offer/miyagi-pool"}
-        ]},
-        "秋田県": { workers: 280, jobs: [
-            {title:"温泉宿泊施設受付", salary:"月給20万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/akita-onsen.jpg", url:"https://resortbaito-dive.com/offer/akita-onsen"},
-            {title:"レストランホール", salary:"月給19万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/akita-restaurant.jpg", url:"https://resortbaito-dive.com/offer/akita-restaurant"}
-        ]},
-        "山形県": { workers: 350, jobs: [
-            {title:"旅館仲居", salary:"月給23万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/yamagata-nakai.jpg", url:"https://resortbaito-dive.com/offer/yamagata-nakai"},
-            {title:"農園作業スタッフ", salary:"月給18万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/yamagata-farm.jpg", url:"https://resortbaito-dive.com/offer/yamagata-farm"}
-        ]},
-        "福島県": { workers: 390, jobs: [
-            {title:"スキー場レンタル係", salary:"月給19万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/fukushima-ski.jpg", url:"https://resortbaito-dive.com/offer/fukushima-ski"},
-            {title:"ホテル厨房スタッフ", salary:"月給21万円", img:"https://resortbaito-dive.s3.ap-northeast-1.amazonaws.com/job-image/fukushima-kitchen.jpg", url:"https://resortbaito-dive.com/offer/fukushima-kitchen"}
-        ]}
-    };
-
-    const container = document.getElementById('prefecture-buttons');
-
-    Object.keys(prefectureData).forEach(pref => {
-        const btn = document.createElement('div');
-        btn.classList.add('menu-btn');
-        btn.dataset.prefecture = pref;
-        btn.textContent = pref;
-        container.appendChild(btn);
-    });
-
-    container.addEventListener('click', function(e){
-        const btn = e.target.closest('.menu-btn');
-        if(!btn) return;
-
-        const pref = btn.dataset.prefecture;
-        const existing = btn.nextElementSibling;
-        if (existing && existing.classList.contains('accordion-body')) {
-            existing.remove();
-            return;
-        }
-
-        const info = prefectureData[pref];
-        const body = document.createElement('div');
-        body.classList.add('accordion-body');
-        body.style.margin = '5px 0 15px 0';
-        body.style.padding = '10px';
-        body.style.backgroundColor = '#f8f9fa';
-        body.style.border = '1px solid #dee2e6';
-        body.style.borderRadius = '8px';
-
-        const jobList = info.jobs.map(job => `
-            <div>
-                <img src="${job.img}" class="job-image" alt="${job.title}">
-                <p><strong>${job.title}</strong></p>
-                <p class="salary">推定給料: ${job.salary}</p>
-                <a href="${job.url}" target="_blank" class="job-link">求人ページへ</a>
-            </div>
-            <hr>
-        `).join('');
-
-        body.innerHTML = `
-            <p>この県でリゾートバイトしている人数: <span class="worker-count">${info.workers}人</span></p>
-            ${jobList}
-        `;
-
-        btn.insertAdjacentElement('afterend', body);
-        body.scrollIntoView({behavior:'smooth'});
-    });
-});
-</script>
 </body>
 </html>
