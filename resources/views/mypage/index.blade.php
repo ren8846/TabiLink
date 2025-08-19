@@ -25,8 +25,8 @@
         </a>
 
 
-        <a href="{{ route('mypage.contact.create') }}" class="menu-btn">問い合わせ</a>
-        <a href="{{ route('mypage.index') }}" class="menu-btn text-danger">ログアウト</a>
+        <a href="{{ route('inquiry.create') }}" class="menu-btn">問い合わせ</a>
+        <a href="{{ route('logout.confirm') }}" class="menu-btn text-danger">ログアウト</a>
     </div>
 </div>
 

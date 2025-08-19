@@ -10,6 +10,9 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IconController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 
 // ① 常にホームを見る
@@ -144,9 +147,32 @@ Route::middleware('auth')->prefix('mypage')->name('mypage.')->group(function () 
     Route::get('/notifications', [NotificationController::class, 'edit'])->name('notifications.edit');
     Route::patch('/notifications', [NotificationController::class, 'update'])->name('notifications.update');
 
-    Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
-    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+    // Route::get('/inquiry',  [ContactController::class, 'create'])->name('inquiry.create');
+    // Route::post('/inquiry', [ContactController::class, 'store'])->name('inquiry.send');
 
     Route::get('/icon', [IconController::class, 'edit'])->name('icon.edit');
     Route::post('/icon', [IconController::class, 'update'])->name('icon.update');
 });
+
+//お問い合わせ
+Route::middleware('auth')->group(function () {
+    Route::get('/mypage/inquiry',  [ContactController::class, 'create'])->name('inquiry.create');
+    Route::post('/mypage/inquiry', [ContactController::class, 'store'])->name('inquiry.send');
+});
+
+//ログアウト
+Route::middleware('auth')->get('/logout/confirm', function () {
+    return view('auth.logout-confirm'); // ← ②で作るBlade
+})->name('logout.confirm');
+
+Route::post('/logout', function (Request $request) {
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('home'); // or '/login'
+})->name('logout');
+
+// Route::middleware('auth')->prefix('mypage')->name('mypage.')->group(function () {
+//     Route::get('/mypage/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/mypage/profile', [ProfileController::class, 'update'])->name('profile.update');
+// });
