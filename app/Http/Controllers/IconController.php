@@ -9,7 +9,7 @@ class IconController extends Controller
     public function edit()
     {
         $user = auth()->user();
-        return view('icon.edit', compact('user'));
+        return view('resources/views/icon/edit.blade.php', compact('user'));
     }
 
     public function update(Request $request)
