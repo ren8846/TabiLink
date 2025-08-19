@@ -13,16 +13,16 @@
           <strong>会話一覧</strong>
         </div>
         <ul class="list-group list-group-flush" style="max-height: 70vh; overflow:auto;">
-          @forelse($conversations as $c)
+          @forelse(($conversations ?? []) as $c)
             @php
-              $partner = $c->users->first(); 
+              $partner = $c->users->firstwhere('id','!=', auth()->id()); 
               $last = optional($c->messages->first());
             @endphp
              <!-- 自分以外（Controllerでフィルタ済み） -->
             <a href="{{ route('dm.show', $c) }}"
                class="list-group-item list-group-item-action d-flex justify-content-between {{ optional($active)->id === $c->id ? 'active text-white' : '' }}">
               <div class="me-2">
-                <div class="fw-semibold">{{ $partner?->name ?? '（不明なユーザー）' }}</div>
+                <div class="fw-semibold">{{ $partner?->username ?? '（不明なユーザー）' }}</div>
                 <small class="{{ optional($active)->id === $c->id ? 'text-white-50' : 'text-muted' }}">
                   {{ \Illuminate\Support\Str::limit($last?->body, 30) }}
                 </small>
@@ -45,7 +45,7 @@
           <div>
             @if($active)
               @php $partner = $active->partnerFor(auth()->id()); @endphp
-              <strong>{{ $partner?->name ?? '会話' }}</strong>
+              <strong>{{ $partner?->username ?? '会話' }}</strong>
               <small class="text-muted ms-2">#{{ $active->id }}</small>
             @else
               <strong>会話なし</strong>
@@ -63,7 +63,7 @@
                 <div class="px-3 py-2 rounded-3 shadow-sm {{ $mine ? 'bg-primary text-white' : 'bg-white' }}"
                      style="max-width: 75%;">
                   <div class="small fw-semibold mb-1">
-                    {{ $mine ? 'あなた' : $m->user->name }}
+                    {{ $mine ? 'あなた' : $m->user->username }}
                     <span class="ms-2 small {{ $mine ? 'text-white-50' : 'text-muted' }}">{{ $m->created_at->format('Y/m/d H:i') }}</span>
                   </div>
                   <div style="white-space: pre-wrap;">{{ $m->body }}</div>
@@ -106,6 +106,21 @@
 
 @push('scripts')
 <script>
+  // 自分のユーザーIDをJSに渡す
+  const meId = @json(auth()->id());
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // ===== ここから Reverb/Echo 購読の追加 =====
+    // app.js 側で `import './echo'` 済み（= window.Echo がいる）前提
+    if (window.Echo && meId) {
+      window.Echo.private(`dm.${meId}`)
+        .listen('.MessageSent', (e) => {
+          // まずは簡単にページ再読込で反映（動作確認用）
+          // 慣れてきたら、ここでDOMにメッセージをappendする実装に変えてOK
+          location.reload();
+        });
+  });
+
   document.addEventListener('DOMContentLoaded', () => {
     const thread = document.getElementById('thread');
     if (thread) {
