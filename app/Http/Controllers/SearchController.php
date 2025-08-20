@@ -9,7 +9,9 @@ class SearchController extends Controller
 {
     public function index(Request $request)
     {
-        // 検索処理
+        $q = trim((string) $request->input('q', ''));
+        return view('search', compact('q')); // ← まずは画面が出ることを優先
+
     }
 }
 

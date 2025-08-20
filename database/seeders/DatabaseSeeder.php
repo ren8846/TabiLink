@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,5 +13,10 @@ class DatabaseSeeder extends Seeder
     $this->call([
         JapanSeeder::class,
     ]);
+
+    User::updateOrCreate(
+        ['email' => 'dev@example.com'],
+        ['name' => 'Dev User', 'password' => Hash::make('Passw0rd!')]
+    );
     }
 }

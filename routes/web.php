@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JapanController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SearchController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DMController;
 use App\Http\Controllers\MypageController;
 use App\Http\Controllers\ProfileController;
@@ -14,10 +15,24 @@ use App\Http\Controllers\IconController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
+use Illuminate\Support\Facades\DB;
 
 
 require __DIR__.'/auth.php';
+
+Route::get('/_ping', fn () => 'ok');
+
+Route::get('/_dbping', function () {
+    try {
+        $db = DB::connection()->getDatabaseName();
+        $ok = DB::select('select 1 as ok')[0]->ok ?? null;
+        return "DB OK ({$db}) : {$ok}";
+    } catch (\Throwable $e) {
+        Log::error('DB ping failed', ['error' => $e->getMessage()]);
+        $msg = app()->isLocal() ? $e->getMessage() : 'database error';
+        return response("DB NG: ".$msg, 500);
+    }
+});
 
 
 // ルート（トップ）: ログイン有無で出し分け
@@ -66,9 +81,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/map', function () {
         return view('map'); 
     })->name('map');
-
-
-use App\Http\Controllers\JapanController;
 
 Route::get('/region/kanto', [JapanController::class, 'showKanto'])->name('region.kanto');
 Route::get('/region/kinki', [JapanController::class, 'showkinki'])->name('region.kinki');
