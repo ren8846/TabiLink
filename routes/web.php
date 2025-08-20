@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/board', [BoardController::class, 'index'])->name('board');
 
-    Route::view('/mypage', 'layouts.mypage')->name('mypage');
+    Route::view('/mypage', 'mypage.index')->name('mypage');
 
     // 一覧
     Route::get('/dm', [DMController::class, 'index'])->name('dm.index');
@@ -171,6 +171,28 @@ Route::post('/logout', function (Request $request) {
 //     Route::get('/mypage/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/mypage/profile', [ProfileController::class, 'update'])->name('profile.update');
 // });
+
+Route::middleware('auth')->group(function () {
+    // 表示（編集画面）
+    Route::get('/mypage/password',  [PasswordController::class, 'edit'])
+        ->name('mypage.password.edit');
+
+    // 更新（送信）
+    Route::put('/mypage/password',  [PasswordController::class, 'update'])
+        ->name('mypage.password.update');
+
+        
+    // 通知設定 画面表示
+    Route::get('/mypage/notifications', [NotificationController::class, 'edit'])
+    ->name('mypage.notifications.edit');
+
+    // 通知設定 更新
+    Route::patch('/mypage/notifications', [NotificationController::class, 'update'])
+    ->name('mypage.notifications.update');
+
+});
+
+
 
 
 
