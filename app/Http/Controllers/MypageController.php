@@ -6,6 +6,6 @@ class MypageController extends Controller
 {
     public function index()
     {
-        return view('mypage.index'); // メニューを出すだけ
+        return to_route('mypage');    // メニューを出すだけ
     }
 }

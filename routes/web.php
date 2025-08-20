@@ -14,7 +14,6 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IconController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\JapanController;
 
 use Illuminate\Support\Facades\DB;
 
@@ -156,21 +155,22 @@ Route::middleware('auth')->group(function () {
 });
 
 //ログアウト
-Route::middleware('auth')->get('/logout/confirm', function () {
-    return view('auth.logout-confirm'); // ← ②で作るBlade
-})->name('logout.confirm');
+Route::middleware('auth')->group(function () {
+    // ログアウト確認画面
+    Route::get('/logout/confirm', function () {
+        return view('auth.logout-confirm');
+    })->name('logout.confirm');
 
-Route::post('/logout', function (Request $request) {
-    Auth::guard('web')->logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect()->route('home'); // or '/login'
-})->name('logout');
+    // 実際のログアウト処理
+    Route::post('/logout', function (Request $request) {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-// Route::middleware('auth')->prefix('mypage')->name('mypage.')->group(function () {
-//     Route::get('/mypage/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/mypage/profile', [ProfileController::class, 'update'])->name('profile.update');
-// });
+        return redirect()->route('home'); // ログイン画面に戻すなら route('login') でもOK
+    })->name('logout.perform');
+});
+
 
 Route::middleware('auth')->group(function () {
     // 表示（編集画面）
@@ -191,6 +191,7 @@ Route::middleware('auth')->group(function () {
     ->name('mypage.notifications.update');
 
 });
+
 
 
 
