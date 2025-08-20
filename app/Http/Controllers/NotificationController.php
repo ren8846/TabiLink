@@ -8,8 +8,7 @@ class NotificationController extends Controller
 {
     public function edit()
     {
-        $user = auth()->user();
-        return view('notifications.edit', compact('user'));
+        return view('mypage.notifications.edit'); // ← このBladeを作る
     }
 
     public function update(Request $request)
@@ -18,6 +17,7 @@ class NotificationController extends Controller
         $user->notify_enabled = $request->boolean('notify_enabled');
         $user->save();
 
-        return back()->with('status', '通知設定を更新しました');
+        return redirect()->route('mypage.notifications.edit')->with('status', '通知設定を更新しました');
     }
+
 }

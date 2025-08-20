@@ -12,17 +12,15 @@
   @endif
 
   <form method="POST" action="{{ route('mypage.notifications.update') }}">
-    @csrf
-    @method('PATCH')
-
-    <label class="inline-flex items-center gap-2 mb-4">
-    <input type="checkbox" name="notify_enabled" value="1"
-            @checked(old('notify_enabled', $user->notify_enabled ?? false))>
-    通知を受け取る
-    </label>
-
-    <button class="px-4 py-2 rounded bg-blue-600 text-white">保存</button>
+  @csrf
+  @method('PATCH')
+  <label class="form-check form-switch">
+    <input type="checkbox" class="form-check-input" name="notify_enabled" {{ auth()->user()->notify_enabled ? 'checked' : '' }}>
+    通知を有効にする
+  </label>
+  <button class="btn btn-primary mt-3">更新</button>
 </form>
+
 </div>
 @endsection
 
