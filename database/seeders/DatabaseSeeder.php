@@ -8,15 +8,17 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
     $this->call([
         JapanSeeder::class,
     ]);
 
-    User::updateOrCreate(
-        ['email' => 'dev@example.com'],
-        ['name' => 'Dev User', 'password' => Hash::make('Passw0rd!')]
-    );
+      if (app()->isLocal()) {
+         User::updateOrCreate(
+            ['email' => 'dev@example.com'],
+            ['name' => 'Dev User', 'password' => Hash::make('Passw0rd!')]
+         );
+      }
     }
 }
