@@ -13,6 +13,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IconController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\JapanController;
 
 
 
@@ -66,9 +67,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/map', function () {
         return view('map'); 
     })->name('map');
-
-
-use App\Http\Controllers\JapanController;
 
 Route::get('/region/kanto', [JapanController::class, 'showKanto'])->name('region.kanto');
 Route::get('/region/kinki', [JapanController::class, 'showkinki'])->name('region.kinki');
