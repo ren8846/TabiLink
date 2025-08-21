@@ -2,30 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use Illuminate\Http\Request;
-use App\Models\Post;
 
 class ProfileController extends Controller
 {
-    public function edit()
-    {
-        $user  = auth()->user();
-        $posts = Post::where('users_id', $user->id)->latest()->take(12)->get(); // サムネ用
-        return view('mypage.profile.edit', compact('user','posts'));
-    }
-
-    public function update(\Illuminate\Http\Request $request)
+    public function edit(Request $request)
     {
         $user = $request->user();
 
-        $data = $request->validate([
-            'name'     => ['nullable','string','max:255'],
-            'username' => ['nullable','string','max:255','unique:users,username,'.$user->id],
-            'gender'   => ['nullable','in:male,female'],
-            'bio'      => ['nullable','string','max:1000'],
+        // プロフィール（無ければ空で）
+        $profile = $user->profile ?: new Profile([
+            'users_id' => $user->id,
+            'gender'   => 'U', // 未回答
         ]);
 
-        $user->update($data);
-        return back()->with('status', 'プロフィールを更新しました');
+        // 自分の投稿履歴
+        $posts = $user->posts()->latest()->paginate(12);
+
+        return view('mypage.profile.edit', compact('user','profile','posts'));
     }
+    public function update(\Illuminate\Http\Request $request)
+{
+    // ログインユーザーを取得
+    $user = auth()->user();
+
+    // 該当ユーザーのプロフィールを取得（無ければ新規作成）
+    $profile = \App\Models\Profile::firstOrNew(['users_id' => $user->id]);
+
+    // フォームの値を反映
+    $profile->fill([
+        'name' => $request->input('name'),
+        'gender' => $request->input('gender'),
+        'self_introduction' => $request->input('self_introduction'),
+    ]);
+
+    // 保存
+    $profile->save();
+
+    // 編集画面へリダイレクト
+    return redirect()->route('mypage.profile.edit')->with('status', 'プロフィールを更新しました');
+}
+
 }

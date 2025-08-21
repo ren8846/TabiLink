@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory; // ← これが正解
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-// use Illuminate\Contracts\Auth\MustVerifyEmail; // メール認証を使うなら有効化
 
-class User extends Authenticatable // implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
@@ -23,5 +22,19 @@ class User extends Authenticatable // implements MustVerifyEmail
             'is_admin'          => 'boolean',
             'notification'      => 'boolean',
         ];
+    }
+
+    // ← ここから下は「クラスの中」に置く
+    public function profile()
+    {
+        // profiles.users_id ↔ users.id
+        return $this->hasOne(Profile::class, 'users_id', 'id');
+
+    }
+
+    public function posts()
+    {
+        // posts.users_id ↔ users.id
+        return $this->hasMany(\App\Models\Post::class, 'users_id', 'id');
     }
 }
