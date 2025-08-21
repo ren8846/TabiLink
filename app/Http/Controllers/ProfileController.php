@@ -11,10 +11,10 @@ class ProfileController extends Controller
     {
         $user  = auth()->user();
         $posts = Post::where('users_id', $user->id)->latest()->take(12)->get(); // サムネ用
-        return view('profile.edit', compact('user','posts'));
+        return view('mypage.profile.edit', compact('user','posts'));
     }
 
-    public function update(Request $request)
+    public function update(\Illuminate\Http\Request $request)
     {
         $user = $request->user();
 

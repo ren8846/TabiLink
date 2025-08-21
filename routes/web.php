@@ -54,9 +54,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', fn () => redirect()->route('home'))->name('dashboard');
 
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create'); // 新規投稿画面
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');        
@@ -192,7 +192,13 @@ Route::middleware('auth')->group(function () {
 
 });
 
+Route::middleware('auth')->group(function () {
+    Route::get('/mypage/profile',  [ProfileController::class, 'edit'])
+        ->name('mypage.profile.edit');
 
+    Route::patch('/mypage/profile', [ProfileController::class, 'update'])
+        ->name('mypage.profile.update');   // ← これが無いと今回のエラーになります
+});
 
 
 
