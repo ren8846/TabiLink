@@ -29,5 +29,29 @@ class Post extends Model
         'post_content',
         'post_genre',
         'users_id',
+        'post_title',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id', 'id');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(\App\Models\PostImage::class, 'post_id', 'post_id')
+                    ->orderBy('sort_order');
+    }
+
+
 }
+
+use App\Models\Post;
+use App\Models\PostImage;
+
+$post = Post::latest('post_id')->first();
+$post->post_id;
+
+PostImage::where('post_id', $post->post_id)->pluck('path', 'id');
+
+Post::with('images')->find($post->post_id)->images->pluck('path','id');

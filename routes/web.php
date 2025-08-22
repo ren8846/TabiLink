@@ -12,28 +12,11 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IconController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use Illuminate\Support\Facades\DB;
-
-
 require __DIR__.'/auth.php';
-
-Route::get('/_ping', fn () => 'ok');
-
-Route::get('/_dbping', function () {
-    try {
-        $db = DB::connection()->getDatabaseName();
-        $ok = DB::select('select 1 as ok')[0]->ok ?? null;
-        return "DB OK ({$db}) : {$ok}";
-    } catch (\Throwable $e) {
-        Log::error('DB ping failed', ['error' => $e->getMessage()]);
-        $msg = app()->isLocal() ? $e->getMessage() : 'database error';
-        return response("DB NG: ".$msg, 500);
-    }
-});
-
 
 // ルート（トップ）: ログイン有無で出し分け
 Route::get('/', fn () => auth()->check()
@@ -48,11 +31,9 @@ Route::get('/dashboard', fn () => redirect()->route('home'))
 
 Route::middleware('auth')->group(function () {
     // ホーム（ログイン必須）
-    Route::view('/home', 'home')->name('home');
-
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     // 旧リンク互換: /dashboard は /home へ
-    Route::get('/dashboard', fn () => redirect()->route('home'))->name('dashboard');
-
+    // Route::get('/dashboard', fn () => redirect()->route('home'))->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -166,10 +147,8 @@ Route::post('/logout', function (Request $request) {
     return redirect()->route('home'); // or '/login'
 })->name('logout');
 
-// Route::middleware('auth')->prefix('mypage')->name('mypage.')->group(function () {
-//     Route::get('/mypage/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/mypage/profile', [ProfileController::class, 'update'])->name('profile.update');
-// });
+
+
 
 
 
