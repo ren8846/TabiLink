@@ -6,17 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::table('profiles', function (Blueprint $table) {
-            $table->string('icon_path', 255)->nullable()->after('self_introduction');
+        Schema::create('profile_images', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('profiles', function (Blueprint $table) {
-            $table->dropColumn('icon_path');
-        });
+        Schema::dropIfExists('profile_images');
     }
 };

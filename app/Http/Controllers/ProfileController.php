@@ -22,26 +22,45 @@ class ProfileController extends Controller
 
         return view('mypage.profile.edit', compact('user','profile','posts'));
     }
-    public function update(\Illuminate\Http\Request $request)
+    public function update(Request $request)
 {
-    // ログインユーザーを取得
     $user = auth()->user();
 
-    // 該当ユーザーのプロフィールを取得（無ければ新規作成）
+    // ★ バリデーション：画像は任意、2MBまで
+    $validated = $request->validate([
+    'name' => ['nullable','string','max:255'],
+    'gender' => ['nullable','in:M,F,U'],
+    'self_introduction' => ['nullable','string','max:2000'],
+    // ここを修正
+    'icon' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
+]);
+
+    // ★ プロフィール取得（なければ新規）
     $profile = \App\Models\Profile::firstOrNew(['users_id' => $user->id]);
 
-    // フォームの値を反映
+    // テキスト系を反映
     $profile->fill([
-        'name' => $request->input('name'),
-        'gender' => $request->input('gender'),
-        'self_introduction' => $request->input('self_introduction'),
+        'name' => $validated['name'] ?? $profile->name,
+        'gender' => $validated['gender'] ?? $profile->gender,
+        'self_introduction' => $validated['self_introduction'] ?? $profile->self_introduction,
     ]);
 
-    // 保存
+    // ★ 画像アップロードがあれば保存
+    if ($request->hasFile('icon')) {
+        // 以前のファイルがあれば削除
+        if (!empty($profile->icon_path) && \Storage::disk('public')->exists($profile->icon_path)) {
+            \Storage::disk('public')->delete($profile->icon_path);
+        }
+
+        // publicディスクの icons/ に保存（例：icons/xxxxxx.jpg）
+        $path = $request->file('icon')->store('icons', 'public');
+        $profile->icon_path = $path;
+    }
+
     $profile->save();
 
-    // 編集画面へリダイレクト
     return redirect()->route('mypage.profile.edit')->with('status', 'プロフィールを更新しました');
 }
+
 
 }
