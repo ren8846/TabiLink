@@ -28,7 +28,7 @@
 
       <!-- {{-- 画像ギャラリー（posts__images優先／URLエンコード対応） --}} -->
       @php
-        $imgs = method_exists($post, 'images') ? $post->images : collect();
+          $imgs = $post->images ?? collect();  // nullの場合は空コレクション
       @endphp
 
       @if($imgs->count() > 0)

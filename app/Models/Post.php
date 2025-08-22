@@ -9,19 +9,15 @@ class Post extends Model
 {
     use HasFactory;
 
-    // テーブル名（単数形じゃなく複数形を指定）
+    // テーブル名
     protected $table = 'posts';
 
-    // 主キーが 'id' 以外なので指定
+    // 主キー
     protected $primaryKey = 'post_id';
-
-    // 主キーが自動採番なので incrementing を true（デフォルト）
     public $incrementing = true;
-
-    // 主キーが整数型なので string ではない
     protected $keyType = 'int';
 
-    // 複数代入を許可するカラム
+    // 複数代入可能なカラム
     protected $fillable = [
         'post_id',
         'post_tag',
@@ -32,26 +28,16 @@ class Post extends Model
         'post_title',
     ];
 
+    // 投稿のユーザー（リレーション）
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id', 'id');
     }
 
+    // 投稿の画像（リレーション）
     public function images()
     {
-        return $this->hasMany(\App\Models\PostImage::class, 'post_id', 'post_id')
+        return $this->hasMany(PostImage::class, 'post_id', 'post_id')
                     ->orderBy('sort_order');
     }
-
-
 }
-
-use App\Models\Post;
-use App\Models\PostImage;
-
-$post = Post::latest('post_id')->first();
-$post->post_id;
-
-PostImage::where('post_id', $post->post_id)->pluck('path', 'id');
-
-Post::with('images')->find($post->post_id)->images->pluck('path','id');
