@@ -15,7 +15,6 @@ use App\Http\Controllers\IconController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\JapanController;
 
 require __DIR__.'/auth.php';
 
@@ -36,9 +35,9 @@ Route::middleware('auth')->group(function () {
     // 旧リンク互換: /dashboard は /home へ
     // Route::get('/dashboard', fn () => redirect()->route('home'))->name('dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create'); // 新規投稿画面
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');        
@@ -46,7 +45,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/board', [BoardController::class, 'index'])->name('board');
 
-    Route::view('/mypage', 'layouts.mypage')->name('mypage');
+    Route::view('/mypage', 'mypage.index')->name('mypage');
 
     // 一覧
     Route::get('/dm', [DMController::class, 'index'])->name('dm.index');
@@ -136,19 +135,39 @@ Route::middleware('auth')->group(function () {
     Route::post('/mypage/inquiry', [ContactController::class, 'store'])->name('inquiry.send');
 });
 
-//ログアウト
-Route::middleware('auth')->get('/logout/confirm', function () {
-    return view('auth.logout-confirm'); // ← ②で作るBlade
+// ログアウト／マイページ（認証必須）
+Route::middleware('auth')->group(function () {
+// ログアウト確認画面
+Route::get('/logout/confirm', function () {
+    return view('auth.logout-confirm');
 })->name('logout.confirm');
 
+// 実際のログアウト処理
 Route::post('/logout', function (Request $request) {
     Auth::guard('web')->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    return redirect()->route('home'); // or '/login'
-})->name('logout');
+    return redirect()->route('home'); // ログイン画面へ戻すなら route('login') でもOK
+})->name('logout'); // ← ここを 'logout' に統一
 
+// パスワード
+Route::get('/mypage/password',  [PasswordController::class, 'edit'])
+    ->name('mypage.password.edit');
+Route::put('/mypage/password',  [PasswordController::class, 'update'])
+    ->name('mypage.password.update');
 
+// 通知設定
+Route::get('/mypage/notifications', [NotificationController::class, 'edit'])
+    ->name('mypage.notifications.edit');
+Route::patch('/mypage/notifications', [NotificationController::class, 'update'])
+    ->name('mypage.notifications.update');
+
+// プロフィール
+Route::get('/mypage/profile',  [ProfileController::class, 'edit'])
+    ->name('mypage.profile.edit');
+Route::patch('/mypage/profile', [ProfileController::class, 'update'])
+    ->name('mypage.profile.update');
+});
 
 
 

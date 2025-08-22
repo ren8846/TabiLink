@@ -16,8 +16,7 @@
         <a href="{{ route('mypage.password.edit') }}" class="menu-btn">パスワード</a>
 
         <!-- 通知設定 ON/OFF -->
-        <a href="{{ route('mypage.notifications.edit') }}"
-        class="menu-btn d-flex justify-content-between align-items-center">
+        <a href="{{ route('mypage.notifications.edit') }}" class="menu-btn">
         <span>通知設定</span>
         <span class="badge bg-secondary">
         {{ auth()->user()->notify_enabled ? 'ON' : 'OFF' }}
