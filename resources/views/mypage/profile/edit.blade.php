@@ -42,17 +42,21 @@
     <div style="width:36px"></div>
   </div>
 
-  {{-- アイコン（画像があれば表示） --}}
-  <div class="avatar-wrap">
-    <div class="avatar">
-      @if (!empty($profile->icon_path ?? null))
-        <img src="{{ asset('storage/'.$profile->icon_path) }}" alt="icon">
-      @endif
-    </div>
-  </div>
+  {{-- アイコン（タップで画像選択が開く） --}}
+<div class="avatar-wrap">
+  <button type="button" id="pickIconBtn" class="avatar" style="cursor:pointer;border:none;padding:0;">
+    <img id="iconPreview"
+         src="{{ !empty($profile->icon_path ?? null) ? asset('storage/'.$profile->icon_path) : '' }}"
+         alt="icon"
+         style="width:100%;height:100%;object-fit:cover;{{ empty($profile->icon_path ?? null) ? 'display:none' : '' }}">
+  </button>
+  {{-- 隠しファイル入力：スマホならカメラ/ギャラリーが開く --}}
+  <input id="iconInput" type="file" name="icon" accept="image/*" capture="environment" style="display:none;">
+</div>
+
 
   {{-- 編集フォーム --}}
-  <form action="{{ route('mypage.profile.update') }}" method="POST" class="mb-3">
+  <form action="{{ route('mypage.profile.update') }}" method="POST" class="mb-3" enctype="multipart/form-data">
     @csrf @method('PATCH')
 
     <div class="form-grid">
@@ -139,6 +143,39 @@
   }, 3200);
 </script>
 @endif
+
+<script>
+(function () {
+  const pickBtn = document.getElementById('pickIconBtn');
+  const input   = document.getElementById('iconInput');
+  const preview = document.getElementById('iconPreview');
+  const form    = document.querySelector('form[action="{{ route('mypage.profile.update') }}"]');
+
+  if (!pickBtn || !input || !form) return;
+
+  // 丸アイコンをタップ → ファイル選択
+  pickBtn.addEventListener('click', () => input.click());
+
+  // 画像を選んだら即プレビュー＆自動送信
+  input.addEventListener('change', () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    // プレビュー表示
+    const reader = new FileReader();
+    reader.onload = e => {
+      if (preview) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      }
+    };
+    reader.readAsDataURL(file);
+
+    // そのまま保存（コントローラでiconを受け取って保存する）
+    form.submit();
+  });
+})();
+</script>
 
 
 @endsection

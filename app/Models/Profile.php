@@ -22,7 +22,7 @@ class Profile extends Model
         'name',
         'gender',              // 'M' | 'F' | 'U'
         'self_introduction',
-        'profile_images_id',
+        'icon_path',
     ];
 
     // リレーション
