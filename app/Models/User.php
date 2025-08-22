@@ -26,15 +26,13 @@ class User extends Authenticatable
 
     // ← ここから下は「クラスの中」に置く
     public function profile()
-    {
-        // profiles.users_id ↔ users.id
-        return $this->hasOne(Profile::class, 'users_id', 'id');
+{
+    return $this->hasOne(\App\Models\Profile::class, 'users_id', 'id');
+}
 
-    }
+public function posts()
+{
+    return $this->hasMany(\App\Models\Post::class, 'users_id', 'id');
+}
 
-    public function posts()
-    {
-        // posts.users_id ↔ users.id
-        return $this->hasMany(\App\Models\Post::class, 'users_id', 'id');
-    }
 }

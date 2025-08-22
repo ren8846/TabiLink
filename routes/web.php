@@ -14,6 +14,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IconController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\HomeController;
 
 use Illuminate\Support\Facades\DB;
 
@@ -48,7 +49,9 @@ Route::get('/dashboard', fn () => redirect()->route('home'))
 
 Route::middleware('auth')->group(function () {
     // ホーム（ログイン必須）
-    Route::view('/home', 'home')->name('home');
+    //Route::view('/home', 'home')->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 
     // 旧リンク互換: /dashboard は /home へ
     Route::get('/dashboard', fn () => redirect()->route('home'))->name('dashboard');
