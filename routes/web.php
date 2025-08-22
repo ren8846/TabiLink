@@ -12,28 +12,11 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\IconController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use Illuminate\Support\Facades\DB;
-
-
 require __DIR__.'/auth.php';
-
-Route::get('/_ping', fn () => 'ok');
-
-Route::get('/_dbping', function () {
-    try {
-        $db = DB::connection()->getDatabaseName();
-        $ok = DB::select('select 1 as ok')[0]->ok ?? null;
-        return "DB OK ({$db}) : {$ok}";
-    } catch (\Throwable $e) {
-        Log::error('DB ping failed', ['error' => $e->getMessage()]);
-        $msg = app()->isLocal() ? $e->getMessage() : 'database error';
-        return response("DB NG: ".$msg, 500);
-    }
-});
-
 
 // ルート（トップ）: ログイン有無で出し分け
 Route::get('/', fn () => auth()->check()
@@ -48,11 +31,9 @@ Route::get('/dashboard', fn () => redirect()->route('home'))
 
 Route::middleware('auth')->group(function () {
     // ホーム（ログイン必須）
-    Route::view('/home', 'home')->name('home');
-
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     // 旧リンク互換: /dashboard は /home へ
-    Route::get('/dashboard', fn () => redirect()->route('home'))->name('dashboard');
-
+    // Route::get('/dashboard', fn () => redirect()->route('home'))->name('dashboard');
 
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -154,50 +135,38 @@ Route::middleware('auth')->group(function () {
     Route::post('/mypage/inquiry', [ContactController::class, 'store'])->name('inquiry.send');
 });
 
-//ログアウト
+// ログアウト／マイページ（認証必須）
 Route::middleware('auth')->group(function () {
-    // ログアウト確認画面
-    Route::get('/logout/confirm', function () {
-        return view('auth.logout-confirm');
-    })->name('logout.confirm');
+// ログアウト確認画面
+Route::get('/logout/confirm', function () {
+    return view('auth.logout-confirm');
+})->name('logout.confirm');
 
-    // 実際のログアウト処理
-    Route::post('/logout', function (Request $request) {
-        Auth::guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+// 実際のログアウト処理
+Route::post('/logout', function (Request $request) {
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('home'); // ログイン画面へ戻すなら route('login') でもOK
+})->name('logout'); // ← ここを 'logout' に統一
 
-        return redirect()->route('home'); // ログイン画面に戻すなら route('login') でもOK
-    })->name('logout.perform');
-});
+// パスワード
+Route::get('/mypage/password',  [PasswordController::class, 'edit'])
+    ->name('mypage.password.edit');
+Route::put('/mypage/password',  [PasswordController::class, 'update'])
+    ->name('mypage.password.update');
 
-
-Route::middleware('auth')->group(function () {
-    // 表示（編集画面）
-    Route::get('/mypage/password',  [PasswordController::class, 'edit'])
-        ->name('mypage.password.edit');
-
-    // 更新（送信）
-    Route::put('/mypage/password',  [PasswordController::class, 'update'])
-        ->name('mypage.password.update');
-
-        
-    // 通知設定 画面表示
-    Route::get('/mypage/notifications', [NotificationController::class, 'edit'])
+// 通知設定
+Route::get('/mypage/notifications', [NotificationController::class, 'edit'])
     ->name('mypage.notifications.edit');
-
-    // 通知設定 更新
-    Route::patch('/mypage/notifications', [NotificationController::class, 'update'])
+Route::patch('/mypage/notifications', [NotificationController::class, 'update'])
     ->name('mypage.notifications.update');
 
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/mypage/profile',  [ProfileController::class, 'edit'])
-        ->name('mypage.profile.edit');
-
-    Route::patch('/mypage/profile', [ProfileController::class, 'update'])
-        ->name('mypage.profile.update');   // ← これが無いと今回のエラーになります
+// プロフィール
+Route::get('/mypage/profile',  [ProfileController::class, 'edit'])
+    ->name('mypage.profile.edit');
+Route::patch('/mypage/profile', [ProfileController::class, 'update'])
+    ->name('mypage.profile.update');
 });
 
 
